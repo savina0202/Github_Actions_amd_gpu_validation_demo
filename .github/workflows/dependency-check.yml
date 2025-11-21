@@ -1,0 +1,49 @@
+name: Dependency Check (Reusable)
+
+on:
+  workflow_call:
+
+jobs:
+  dependency-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+      
+      - name: Install dependency check tools
+        run: |
+          pip install safety pip-audit
+      
+      - name: Check dependencies with Safety
+        run: |
+          echo "Running Safety dependency check..."
+          safety check --json --output safety-deps-report.json || true
+          safety check || echo "Safety found vulnerabilities"
+        continue-on-error: true
+      
+      - name: Check dependencies with pip-audit
+        run: |
+          echo "Running pip-audit dependency check..."
+          pip-audit --desc --format json --output pip-audit-report.json || true
+          pip-audit --desc || echo "pip-audit found vulnerabilities"
+        continue-on-error: true
+      
+      - name: Check for outdated packages
+        run: |
+          echo "Checking for outdated packages..."
+          pip list --outdated || echo "Some packages may be outdated"
+        continue-on-error: true
+      
+      - name: Upload dependency check reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: dependency-check-reports
+          path: |
+            safety-deps-report.json
+            pip-audit-report.json
+          retention-days: 30
+

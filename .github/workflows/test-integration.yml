@@ -1,0 +1,54 @@
+name: Integration Tests (Reusable)
+
+on:
+  workflow_call:
+    inputs:
+      python-version:
+        required: true
+        type: string
+      os:
+        required: false
+        type: string
+        default: ubuntu-latest
+      gpu-driver-version:
+        required: true
+        type: string
+
+jobs:
+  integration-tests:
+    runs-on: ${{ inputs.os }}
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ inputs.python-version }}
+      
+      - name: Cache pip dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: pip-${{ runner.os }}-${{ inputs.python-version }}-${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            pip-${{ runner.os }}-${{ inputs.python-version }}-
+      
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      
+      - name: Set environment variables
+        run: |
+          echo "DRIVER_VERSION=${{ inputs.gpu-driver-version }}" >> $GITHUB_ENV
+          echo "PYTHONPATH=${{ github.workspace }}" >> $GITHUB_ENV
+      
+      - name: Run integration tests
+        run: pytest -m "unit or integration" -v --tb=short
+      
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: integration-test-results-${{ inputs.os }}-${{ inputs.python-version }}-${{ inputs.gpu-driver-version }}
+          path: |
+            .pytest_cache/
+          retention-days: 7
+

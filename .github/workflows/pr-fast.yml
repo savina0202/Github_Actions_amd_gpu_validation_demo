@@ -1,0 +1,56 @@
+name: PR Fast Tests
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches: [main, dev]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: true
+
+jobs:
+  # 1. Quality Gates (快速)
+  quality-gates:
+    name: Quality Gates
+    uses: ./.github/workflows/quality-gates.yml
+    with:
+      python-version: '3.10'
+      test-type: 'unit'
+      coverage-threshold: 80
+      fail-on-lint: true
+      fail-on-security: false  # 不阻塞PR，仅警告
+    secrets: inherit
+
+  # 2. Unit Tests (快速，单组合)
+  unit-tests:
+    name: Unit Tests
+    uses: ./.github/workflows/test-unit.yml
+    with:
+      python-version: '3.10'
+      os: ubuntu-latest
+      gpu-driver-version: '2.0'
+    secrets: inherit
+
+  # 3. Quick Security Scan (不阻塞)
+  security-quick:
+    name: Quick Security Scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+      
+      - name: Secret detection (快速)
+        run: |
+          echo "Running quick secret scan..."
+          if grep -rE "(api[_-]?key|secret|password|token)" --include="*.py" --include="*.yml" src/ .github/ 2>/dev/null; then
+            echo "⚠️ Potential secrets found. Review manually."
+          else
+            echo "✅ No obvious secrets detected."
+          fi
+        continue-on-error: true
+

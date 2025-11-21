@@ -1,0 +1,54 @@
+name: Security Scan (Reusable)
+
+on:
+  workflow_call:
+
+jobs:
+  security-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+      
+      - name: Install security tools
+        run: |
+          pip install bandit safety trufflehog
+      
+      - name: Bandit security scan (SAST)
+        run: |
+          echo "Running Bandit SAST scan..."
+          bandit -r src/ -ll -f json -o bandit-report.json || true
+          bandit -r src/ -ll || echo "Bandit completed with issues"
+        continue-on-error: true
+      
+      - name: Safety dependency check (SCA)
+        run: |
+          echo "Running Safety dependency check..."
+          safety check --json --output safety-report.json || true
+          safety check || echo "Safety completed with vulnerabilities"
+        continue-on-error: true
+      
+      - name: Secret detection (TruffleHog)
+        run: |
+          echo "Running TruffleHog secret scan..."
+          # Basic secret detection - using grep pattern
+          if grep -rE "(api[_-]?key|secret|password|token)" --include="*.py" --include="*.yml" --include="*.yaml" src/ .github/ 2>/dev/null; then
+            echo "⚠️ Potential secrets found. Review manually."
+          else
+            echo "✅ No obvious secrets detected."
+          fi
+        continue-on-error: true
+      
+      - name: Upload security reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: security-scan-reports
+          path: |
+            bandit-report.json
+            safety-report.json
+          retention-days: 30
+

@@ -1,0 +1,84 @@
+name: Nightly Full Tests
+
+on:
+  schedule:
+    - cron: '0 2 * * *'  # 每天 02:00 UTC
+  workflow_dispatch:
+    inputs:
+      run-full-matrix:
+        description: 'Run full matrix tests'
+        required: false
+        default: true
+        type: boolean
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  # 1. Full Matrix Tests (所有组合)
+  full-matrix-test:
+    name: Full Matrix Tests
+    if: inputs.run-full-matrix != false
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        python-version: ["3.9", "3.10", "3.11"]
+        gpu-driver-version: ["1.0", "2.0"]
+        exclude:
+          # 排除不兼容的组合
+          - os: windows-latest
+            gpu-driver-version: "2.0"
+    uses: ./.github/workflows/test-matrix.yml
+    with:
+      os: ${{ matrix.os }}
+      python-version: ${{ matrix.python-version }}
+      gpu-driver-version: ${{ matrix.gpu-driver-version }}
+    secrets: inherit
+
+  # 2. All Test Types (Unit + Integration + E2E)
+  all-tests:
+    name: All Test Types
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.9", "3.10"]
+        gpu-driver-version: ["1.0", "2.0"]
+    uses: ./.github/workflows/test-e2e.yml
+    with:
+      python-version: ${{ matrix.python-version }}
+      os: ubuntu-latest
+      gpu-driver-version: ${{ matrix.gpu-driver-version }}
+    secrets: inherit
+
+  # 3. Performance Benchmark
+  performance-benchmark:
+    name: Performance Benchmark
+    uses: ./.github/workflows/performance-benchmark.yml
+    secrets: inherit
+
+  # 4. Full Security Audit
+  security-audit:
+    name: Security Audit
+    uses: ./.github/workflows/security-audit.yml
+    secrets: inherit
+
+  # 5. Dependency Check
+  dependency-check:
+    name: Dependency Check
+    uses: ./.github/workflows/dependency-check.yml
+    secrets: inherit
+
+  # 6. Quality Gates (完整)
+  quality-gates-full:
+    name: Quality Gates (Full)
+    uses: ./.github/workflows/quality-gates.yml
+    with:
+      python-version: '3.10'
+      test-type: ''  # 所有测试
+      coverage-threshold: 80
+      fail-on-lint: true
+      fail-on-security: true
+    secrets: inherit
+

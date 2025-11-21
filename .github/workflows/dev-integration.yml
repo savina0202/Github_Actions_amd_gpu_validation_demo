@@ -1,0 +1,51 @@
+name: Dev Integration Tests
+
+on:
+  push:
+    branches: [dev]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  # 1. Quality Gates (完整)
+  quality-gates:
+    name: Quality Gates
+    uses: ./.github/workflows/quality-gates.yml
+    with:
+      python-version: '3.10'
+      test-type: 'unit or integration'
+      coverage-threshold: 75
+      fail-on-lint: true
+      fail-on-security: true
+    secrets: inherit
+
+  # 2. Integration Tests (中等矩阵: 2 Python × 2 Driver)
+  integration-tests:
+    name: Integration Tests Matrix
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.9", "3.10"]
+        gpu-driver-version: ["1.0", "2.0"]
+    uses: ./.github/workflows/test-integration.yml
+    with:
+      python-version: ${{ matrix.python-version }}
+      os: ubuntu-latest
+      gpu-driver-version: ${{ matrix.gpu-driver-version }}
+    secrets: inherit
+
+  # 3. Security Scan (完整)
+  security-full:
+    name: Full Security Scan
+    uses: ./.github/workflows/security-scan.yml
+    secrets: inherit
+
+  # 4. Performance Benchmarks
+  performance-benchmark:
+    name: Performance Benchmark
+    uses: ./.github/workflows/performance-benchmark.yml
+    secrets: inherit
+

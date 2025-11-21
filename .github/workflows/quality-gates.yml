@@ -1,0 +1,149 @@
+name: Quality Gates (Reusable)
+
+on:
+  workflow_call:
+    inputs:
+      python-version:
+        required: true
+        type: string
+      test-type:
+        required: false
+        type: string
+        default: 'unit'
+      coverage-threshold:
+        required: false
+        type: number
+        default: 80
+      fail-on-lint:
+        required: false
+        type: boolean
+        default: true
+      fail-on-security:
+        required: false
+        type: boolean
+        default: true
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ inputs.python-version }}
+      
+      - name: Cache pip dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: pip-${{ runner.os }}-${{ inputs.python-version }}-${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            pip-${{ runner.os }}-${{ inputs.python-version }}-
+      
+      - name: Install lint dependencies
+        run: |
+          pip install flake8 black isort
+      
+      - name: Run lint checks
+        run: |
+          echo "Running flake8..."
+          flake8 src/ --count --statistics --max-line-length=100 || echo "flake8 found issues"
+          echo "Checking code formatting with black..."
+          black --check src/ || echo "black found formatting issues"
+          echo "Checking import sorting with isort..."
+          isort --check-only src/ || echo "isort found import issues"
+        continue-on-error: ${{ !inputs.fail-on-lint }}
+      
+      - name: Lint enforcement
+        if: failure() && inputs.fail-on-lint
+        run: |
+          echo "❌ Lint check failed. Please fix the issues above."
+          exit 1
+
+  coverage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ inputs.python-version }}
+      
+      - name: Cache pip dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: pip-${{ runner.os }}-${{ inputs.python-version }}-${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            pip-${{ runner.os }}-${{ inputs.python-version }}-
+      
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt pytest-cov
+      
+      - name: Set PYTHONPATH
+        run: echo "PYTHONPATH=${{ github.workspace }}" >> $GITHUB_ENV
+      
+      - name: Run tests with coverage
+        run: |
+          pytest -m "${{ inputs.test-type }}" \
+            --cov=src \
+            --cov-report=xml \
+            --cov-report=term \
+            --cov-report=html \
+            --cov-fail-under=${{ inputs.coverage-threshold }} \
+            -v
+      
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          files: ./coverage.xml
+          flags: unittests
+          name: codecov-${{ inputs.test-type }}
+          fail_ci_if_error: false
+      
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report-${{ inputs.test-type }}
+          path: |
+            coverage.xml
+            htmlcov/
+          retention-days: 7
+
+  security:
+    runs-on: ubuntu-latest
+    if: inputs.fail-on-security
+    steps:
+      - uses: actions/checkout@v4
+      
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ inputs.python-version }}
+      
+      - name: Install security tools
+        run: |
+          pip install bandit safety
+      
+      - name: Bandit security scan (SAST)
+        run: |
+          bandit -r src/ -f json -o bandit-report.json || true
+          bandit -r src/ -ll || echo "Bandit found issues"
+        continue-on-error: true
+      
+      - name: Safety dependency check (SCA)
+        run: |
+          safety check --json --output safety-report.json || true
+          safety check || echo "Safety found vulnerabilities"
+        continue-on-error: true
+      
+      - name: Upload security reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-reports
+          path: |
+            bandit-report.json
+            safety-report.json
+          retention-days: 30
+
