@@ -40,6 +40,7 @@ class GPUDriver:
         self.memory_allocated = max(self.memory_allocated - amount, 0)
         return self.memory_allocated
 
+    # Get temperature
     def get_temperature(self):
         """Return a fake temperature."""
         # Different driver versions behave differently
