@@ -34,11 +34,25 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
       
-      - name: Set environment variables
+      # - name: Set environment variables
+      #   run: |
+      #     echo "DRIVER_VERSION=${{ inputs.gpu-driver-version }}" >> $GITHUB_ENV
+      #     echo "PYTHONPATH=${{ github.workspace }}" >> $GITHUB_ENV
+      
+      # For Linux 
+      - name: Set PYTHONPATH for Linux
+        if: runner.os != 'Windows'
         run: |
           echo "DRIVER_VERSION=${{ inputs.gpu-driver-version }}" >> $GITHUB_ENV
           echo "PYTHONPATH=${{ github.workspace }}" >> $GITHUB_ENV
-      
+
+      # For Windows (must force bash)
+      - name: Set PYTHONPATH for Windows
+        if: runner.os == 'Windows'
+        shell: bash
+        run: echo "PYTHONPATH=$(pwd)/src" >> $GITHUB_ENV
+
+
       - name: Run all tests
         run: pytest -v --tb=short --cov=src --cov-report=xml --cov-report=term
       
