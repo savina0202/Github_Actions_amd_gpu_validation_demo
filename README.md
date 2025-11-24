@@ -37,7 +37,7 @@ feature/* → dev → main
    - Triggers: `pr-fast.yml` workflow
    - Fast feedback with minimal test matrix
    - Focus on code quality and unit tests
-  <br><br>For details, please see the demo PR: https://github.com/savina0202/Github_Actions_amd_gpu_validation_demo/pull/20
+  <br><br>✅For details, please see the demo PR: https://github.com/savina0202/Github_Actions_amd_gpu_validation_demo/pull/20
    
 
 2. **Dev Branch → Main Branch (PR)**
@@ -45,7 +45,7 @@ feature/* → dev → main
    - Comprehensive integration testing
    - Medium test matrix with multiple Python/Driver combinations
    - Full security scanning
-  <br><br>For details, please see the <bold>demo PR: https://github.com/savina0202/Github_Actions_amd_gpu_validation_demo/pull/17</bold>
+  <br><br>✅For details, please see the demo PR: https://github.com/savina0202/Github_Actions_amd_gpu_validation_demo/pull/17
 
   
 
@@ -55,7 +55,7 @@ feature/* → dev → main
    - Complete test suite including E2E tests
    - Comprehensive security audits and dependency checks
    
-   For details, please see the test result: https://github.com/savina0202/Github_Actions_amd_gpu_validation_demo/actions/runs/19637631586
+   ✅For details, please see the test result: https://github.com/savina0202/Github_Actions_amd_gpu_validation_demo/actions/runs/19637631586
 
 ## 🔄 Workflow Overview
 
