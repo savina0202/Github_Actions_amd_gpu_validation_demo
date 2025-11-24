@@ -82,29 +82,29 @@ jobs:
   close-regressions:
     needs: [full-matrix-test, all-tests, quality-gates-full]
     if: ${{ needs.full-matrix-test.result == 'success' && needs.all-tests.result == 'success' && needs.quality-gates-full.result == 'success' }}
-      runs-on: ubuntu-latest
-      steps:
-        - name: Close auto-close issues when nightly is green
-          uses: actions/github-script@v6
-          with:
-            github-token: ${{ secrets.GITHUB_TOKEN }}
-            script: |
-              const owner = context.repo.owner;
-              const repo = context.repo.repo;
-              // List all open issues with label "auto-close-on-green"
-              const issues = await github.paginate(
-                github.rest.issues.listForRepo,
-                { owner, repo, labels: 'auto-close-on-green', state: 'open', per_page: 100 }
-              );
-              for (const issue of issues) {
-                // Optional: add a comment before closing
-                await github.rest.issues.createComment({
-                  owner, repo, issue_number: issue.number,
-                  body: `Nightly tests passed — closing this issue automatically. If this is incorrect, please re-open or comment.`
-                });
-                // Close the issue
-                await github.rest.issues.update({
-                  owner, repo, issue_number: issue.number,
-                  state: 'closed'
-                });
-              }
+    runs-on: ubuntu-latest
+    steps:
+      - name: Close auto-close issues when nightly is green
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            // List all open issues with label "auto-close-on-green"
+            const issues = await github.paginate(
+              github.rest.issues.listForRepo,
+              { owner, repo, labels: 'auto-close-on-green', state: 'open', per_page: 100 }
+            );
+            for (const issue of issues) {
+              // Optional: add a comment before closing
+              await github.rest.issues.createComment({
+                owner, repo, issue_number: issue.number,
+                body: `Nightly tests passed — closing this issue automatically. If this is incorrect, please re-open or comment.`
+              });
+              // Close the issue
+              await github.rest.issues.update({
+                owner, repo, issue_number: issue.number,
+                state: 'closed'
+              });
+            }
