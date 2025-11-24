@@ -384,7 +384,6 @@ This project currently demonstrates **Level 3-4 DevOps maturity** with solid CI/
 - [GitHub Actions Documentation](https://docs.github.com/en/actions)
 - [Pytest Documentation](https://docs.pytest.org/)
 - [Pytest Markers](https://docs.pytest.org/en/stable/how-to/mark.html)
-- [DevOps Enhancement Roadmap](DEVOPS_ENHANCEMENTS.md)
 
 ---
 
