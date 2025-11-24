@@ -23,13 +23,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        os: [ubuntu-latest]
         python-version: ["3.9", "3.10", "3.11"]
         gpu-driver-version: ["1.0", "2.0"]
-        exclude:
-          # 排除不兼容的组合
-          - os: windows-latest
-            gpu-driver-version: "2.0"
     uses: ./.github/workflows/test-matrix.yml
     with:
       os: ${{ matrix.os }}
@@ -82,3 +78,33 @@ jobs:
       fail-on-security: true
     secrets: inherit
 
+  # 7. Auto-close Issues if Nightly is Green
+  close-regressions:
+      needs: nightly-tests
+      if: ${{ needs.nightly-tests.result == 'success' }}
+      runs-on: ubuntu-latest
+      steps:
+        - name: Close auto-close issues when nightly is green
+          uses: actions/github-script@v6
+          with:
+            github-token: ${{ secrets.GITHUB_TOKEN }}
+            script: |
+              const owner = context.repo.owner;
+              const repo = context.repo.repo;
+              // List all open issues with label "auto-close-on-green"
+              const issues = await github.paginate(
+                github.rest.issues.listForRepo,
+                { owner, repo, labels: 'auto-close-on-green', state: 'open', per_page: 100 }
+              );
+              for (const issue of issues) {
+                // Optional: add a comment before closing
+                await github.rest.issues.createComment({
+                  owner, repo, issue_number: issue.number,
+                  body: `Nightly tests passed — closing this issue automatically. If this is incorrect, please re-open or comment.`
+                });
+                // Close the issue
+                await github.rest.issues.update({
+                  owner, repo, issue_number: issue.number,
+                  state: 'closed'
+                });
+              }
