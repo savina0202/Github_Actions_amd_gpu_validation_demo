@@ -1,0 +1,27 @@
+name: Feature request
+description: Suggest an improvement or new feature
+title: "[FEAT] - "
+labels: ["enhancement"]
+body:
+  - type: input
+    id: summary
+    attributes:
+      label: Short summary
+      required: true
+  - type: textarea
+    id: motivation
+    attributes:
+      label: Motivation / Use case
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed implementation
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      options:
+        - Low
+        - Medium
+        - High
