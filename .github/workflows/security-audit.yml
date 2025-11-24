@@ -17,11 +17,23 @@ jobs:
         run: |
           pip install bandit safety
       
-      - name: CodeQL Analysis (if configured)
-        uses: github/codeql-action/analyze@v3
+      # - name: CodeQL Analysis (if configured)
+      #   uses: github/codeql-action/analyze@v3
+      #   with:
+      #     languages: python
+      #   continue-on-error: true
+      
+      # --- FIX: CodeQL requires init before analyze ---
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
         with:
           languages: python
         continue-on-error: true
+
+      - name: Analyze with CodeQL
+        uses: github/codeql-action/analyze@v3
+        continue-on-error: true
+      # ------------------------------------------------      
       
       - name: Bandit security scan (full)
         run: |
