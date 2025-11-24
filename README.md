@@ -18,7 +18,7 @@ This project demonstrates a comprehensive CI/CD pipeline using GitHub Actions th
 
 This is a demo project that simulates GPU driver and compute functionality for validation purposes. The project includes:
 
-- **Mock GPU Driver** (`src/gpu_driver.py`): Simulates GPU driver operations including initialization, memory management, and compute execution
+- **Mock GPU Driver** (`src/gpu_driver.py`): Simulates GPU driver operations, including initialization, memory management, and compute execution
 - **Mock GPU Compute Module** (`src/gpu_compute.py`): Provides workload execution and benchmarking capabilities
 - **Comprehensive Test Suite**: Unit, integration, E2E, and performance tests
 - **Multi-level CI/CD Pipeline**: Different test suites triggered based on branch and PR context
@@ -45,7 +45,7 @@ feature/* → dev → main
    - Comprehensive integration testing
    - Medium test matrix with multiple Python/Driver combinations
    - Full security scanning
-  <br><br>For details, please see the <font color='#0000FF'>demo PR: https://github.com/savina0202/Github_Actions_amd_gpu_validation_demo/pull/17 </font>
+  <br><br>For details, please see the <bold>demo PR: https://github.com/savina0202/Github_Actions_amd_gpu_validation_demo/pull/17</bold>
 
   
 
