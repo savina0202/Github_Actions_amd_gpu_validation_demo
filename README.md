@@ -37,12 +37,19 @@ feature/* → dev → main
    - Triggers: `pr-fast.yml` workflow
    - Fast feedback with minimal test matrix
    - Focus on code quality and unit tests
+  
+   <img width="1032" height="890" alt="image" src="https://github.com/user-attachments/assets/ce273376-b387-4a69-a015-466ac8df64bc" />
+
 
 2. **Dev Branch → Main Branch (PR)**
    - Triggers: `dev-integration.yml` workflow
    - Comprehensive integration testing
    - Medium test matrix with multiple Python/Driver combinations
    - Full security scanning
+  
+ <img width="1014" height="818" alt="image" src="https://github.com/user-attachments/assets/ff0ce361-5612-4304-9d46-3878a7dd8e3b" />
+ <img width="1024" height="535" alt="image" src="https://github.com/user-attachments/assets/7910c142-72f3-4a54-8a1a-3d0d2253846c" />
+  
 
 3. **Nightly Scheduled Runs**
    - Triggers: `nightly-full.yml` workflow (runs at 02:00 UTC daily)
