@@ -2,7 +2,12 @@ name: Security Audit (Reusable)
 
 on:
   workflow_call:
-
+  
+permissions:
+  actions: read
+  contents: read
+  security-events: write
+  
 jobs:
   security-audit:
     runs-on: ubuntu-latest
