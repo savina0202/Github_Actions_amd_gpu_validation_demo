@@ -47,7 +47,7 @@ feature/* → dev → main
    - Full security scanning
   
  <img width="500" height="400" alt="image" src="https://github.com/user-attachments/assets/ff0ce361-5612-4304-9d46-3878a7dd8e3b" />
- <img width="1024" height="247" alt="image" src="https://github.com/user-attachments/assets/7910c142-72f3-4a54-8a1a-3d0d2253846c" />
+ <img width="500" height="247" alt="image" src="https://github.com/user-attachments/assets/7910c142-72f3-4a54-8a1a-3d0d2253846c" />
   
 
 3. **Nightly Scheduled Runs**
