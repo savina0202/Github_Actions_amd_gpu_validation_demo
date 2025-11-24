@@ -2,7 +2,7 @@ name: Nightly Full Tests
 
 on:
   schedule:
-    - cron: '0 2 * * *'  # 每天 02:00 UTC
+    - cron: '0 2 * * *'  # 02:00 UTC daily
   workflow_dispatch:
     inputs:
       run-full-matrix:
@@ -16,7 +16,7 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  # 1. Full Matrix Tests (所有组合)
+  # 1. Full Matrix Tests (All combinations)
   full-matrix-test:
     name: Full Matrix Tests
     if: inputs.run-full-matrix != false
@@ -66,45 +66,14 @@ jobs:
     uses: ./.github/workflows/dependency-check.yml
     secrets: inherit
 
-  # 6. Quality Gates (完整)
+  # 6. Quality Gates (Full)
   quality-gates-full:
     name: Quality Gates (Full)
     uses: ./.github/workflows/quality-gates.yml
     with:
       python-version: '3.10'
-      test-type: ''  # 所有测试
+      test-type: ''  # All tests
       coverage-threshold: 80
       fail-on-lint: true
       fail-on-security: true
     secrets: inherit
-
-  # 7. Auto-close Issues if Nightly is Green
-  close-regressions:
-    needs: [full-matrix-test, all-tests, quality-gates-full]
-    if: ${{ needs.full-matrix-test.result == 'success' && needs.all-tests.result == 'success' && needs.quality-gates-full.result == 'success' }}
-      runs-on: ubuntu-latest
-      steps:
-        - name: Close auto-close issues when nightly is green
-          uses: actions/github-script@v6
-          with:
-            github-token: ${{ secrets.GITHUB_TOKEN }}
-            script: |
-              const owner = context.repo.owner;
-              const repo = context.repo.repo;
-              // List all open issues with label "auto-close-on-green"
-              const issues = await github.paginate(
-                github.rest.issues.listForRepo,
-                { owner, repo, labels: 'auto-close-on-green', state: 'open', per_page: 100 }
-              );
-              for (const issue of issues) {
-                // Optional: add a comment before closing
-                await github.rest.issues.createComment({
-                  owner, repo, issue_number: issue.number,
-                  body: `Nightly tests passed — closing this issue automatically. If this is incorrect, please re-open or comment.`
-                });
-                // Close the issue
-                await github.rest.issues.update({
-                  owner, repo, issue_number: issue.number,
-                  state: 'closed'
-                });
-              }
