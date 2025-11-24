@@ -45,6 +45,7 @@ class GPUDriver:
         """Return a fake temperature."""
         # Different driver versions behave differently
         base_temp = 45 if self.version == "1.0" else 50
+        #Fixed bug#3 2025-11-23
         return base_temp + random.randint(0, 5)
 
     def run_compute(self, workload_size):
