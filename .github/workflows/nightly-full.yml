@@ -2,7 +2,7 @@ name: Nightly Full Tests
 
 on:
   schedule:
-    - cron: '0 2 * * *'  # 每天 02:00 UTC
+    - cron: '0 2 * * *'  # 02:00 UTC daily
   workflow_dispatch:
     inputs:
       run-full-matrix:
@@ -16,7 +16,7 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  # 1. Full Matrix Tests (所有组合)
+  # 1. Full Matrix Tests (All combinations)
   full-matrix-test:
     name: Full Matrix Tests
     if: inputs.run-full-matrix != false
@@ -66,13 +66,13 @@ jobs:
     uses: ./.github/workflows/dependency-check.yml
     secrets: inherit
 
-  # 6. Quality Gates (完整)
+  # 6. Quality Gates (Full)
   quality-gates-full:
     name: Quality Gates (Full)
     uses: ./.github/workflows/quality-gates.yml
     with:
       python-version: '3.10'
-      test-type: ''  # 所有测试
+      test-type: ''  # All tests
       coverage-threshold: 80
       fail-on-lint: true
       fail-on-security: true
