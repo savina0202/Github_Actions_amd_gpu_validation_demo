@@ -38,7 +38,7 @@ feature/* → dev → main
    - Fast feedback with minimal test matrix
    - Focus on code quality and unit tests
      
-  ✅For details, please see the demo PR: https://github.com/savina0202/Github_Actions_amd_gpu_validation_demo/pull/20
+   ✅For details, please see the demo PR: https://github.com/savina0202/Github_Actions_amd_gpu_validation_demo/pull/20
    
 
 2. **Dev Branch → Main Branch (PR)**
@@ -47,7 +47,7 @@ feature/* → dev → main
    - Medium test matrix with multiple Python/Driver combinations
    - Full security scanning
      
-  ✅For details, please see the demo PR: https://github.com/savina0202/Github_Actions_amd_gpu_validation_demo/pull/17
+   ✅For details, please see the demo PR: https://github.com/savina0202/Github_Actions_amd_gpu_validation_demo/pull/17
 
   
 
