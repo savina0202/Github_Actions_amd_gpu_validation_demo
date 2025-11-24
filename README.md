@@ -1,6 +1,6 @@
-# GitHub Actions AMD GPU Validation Demo
+# GitHub Actions with mock AMD GPU Validations in Demo
 
-This project demonstrates a comprehensive CI/CD pipeline using GitHub Actions that triggers different levels of tests based on branch merging workflows. The pipeline implements a multi-stage testing strategy for code flowing from feature branches → dev branch → main branch, plus scheduled nightly runs.
+This project demonstrates a comprehensive CI/CD pipeline using GitHub Actions that triggers different levels of tests (mock AMD GPU validation tests) based on branch merging workflows. The pipeline implements a multi-stage testing strategy for code flowing from feature branches → dev branch → main branch, plus scheduled nightly runs. The design philosophy prioritizes improving work efficiency. The testing volume ranges from rapid to comprehensive. The test types can be changed based on the actual requirements.
 
 ## 📋 Table of Contents
 
