@@ -38,8 +38,8 @@ feature/* → dev → main
    - Fast feedback with minimal test matrix
    - Focus on code quality and unit tests
   
-   <img width="1032" height="890" alt="image" src="https://github.com/user-attachments/assets/ce273376-b387-4a69-a015-466ac8df64bc" />
-
+   <!img width="1032" height="890" alt="image" src="https://github.com/user-attachments/assets/ce273376-b387-4a69-a015-466ac8df64bc" />
+   <img width="500" height="445" alt="image" src="https://github.com/user-attachments/assets/ce273376-b387-4a69-a015-466ac8df64bc" />
 
 2. **Dev Branch → Main Branch (PR)**
    - Triggers: `dev-integration.yml` workflow
