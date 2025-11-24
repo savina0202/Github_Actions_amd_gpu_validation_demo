@@ -53,4 +53,3 @@ jobs:
             echo "✅ No obvious secrets detected."
           fi
         continue-on-error: true
-
