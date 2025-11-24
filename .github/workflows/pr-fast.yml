@@ -11,7 +11,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # 1. Quality Gates (快速)
+  # 1. Quality Gates (Fast)
   quality-gates:
     name: Quality Gates
     uses: ./.github/workflows/quality-gates.yml
@@ -20,10 +20,10 @@ jobs:
       test-type: 'unit'
       coverage-threshold: 80
       fail-on-lint: true
-      fail-on-security: false  # 不阻塞PR，仅警告
+      fail-on-security: false  # Not blocking the PR，only warning
     secrets: inherit
 
-  # 2. Unit Tests (快速，单组合)
+  # 2. Unit Tests (Fast, a single combination)
   unit-tests:
     name: Unit Tests
     uses: ./.github/workflows/test-unit.yml
@@ -33,7 +33,7 @@ jobs:
       gpu-driver-version: '2.0'
     secrets: inherit
 
-  # 3. Quick Security Scan (不阻塞)
+  # 3. Quick Security Scan (Not blocking)
   security-quick:
     name: Quick Security Scan
     runs-on: ubuntu-latest
@@ -44,7 +44,7 @@ jobs:
         with:
           python-version: '3.10'
       
-      - name: Secret detection (快速)
+      - name: Secret detection (Fast)
         run: |
           echo "Running quick secret scan..."
           if grep -rE "(api[_-]?key|secret|password|token)" --include="*.py" --include="*.yml" src/ .github/ 2>/dev/null; then
