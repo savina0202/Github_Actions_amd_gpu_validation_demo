@@ -38,6 +38,7 @@ class GPUDriver:
     def release_memory(self, amount):
         """Simulate memory free."""
         self.memory_allocated = max(self.memory_allocated - amount, 0)
+        # Fixed issue #15 2025-11-23
         return self.memory_allocated
 
     # Get temperature
