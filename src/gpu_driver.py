@@ -53,5 +53,6 @@ class GPUDriver:
         """Forward computation to compute engine."""
         if not self.initialized:
             raise RuntimeError("Driver not initialized")
+        #Fixed issue #14 2025-11-24
         time.sleep(0.1)
         return workload_size * 2  # Just a mock result
