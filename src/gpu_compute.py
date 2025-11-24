@@ -23,4 +23,5 @@ def benchmark_compute(size):
     output = run_workload(size)
     end = time.time()
     latency = end - start
+    # Fixed issue #14 2025-11-23
     return output, latency
