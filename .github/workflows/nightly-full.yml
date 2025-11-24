@@ -80,8 +80,8 @@ jobs:
 
   # 7. Auto-close Issues if Nightly is Green
   close-regressions:
-      needs: nightly-tests
-      if: ${{ needs.nightly-tests.result == 'success' }}
+    needs: [full-matrix-test, all-tests, quality-gates-full]
+    if: ${{ needs.full-matrix-test.result == 'success' && needs.all-tests.result == 'success' && needs.quality-gates-full.result == 'success' }}
       runs-on: ubuntu-latest
       steps:
         - name: Close auto-close issues when nightly is green
