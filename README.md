@@ -45,7 +45,7 @@ feature/* → dev → main
    - Comprehensive integration testing
    - Medium test matrix with multiple Python/Driver combinations
    - Full security scanning
-  <br><br>For details, please see the PR: https://github.com/savina0202/Github_Actions_amd_gpu_validation_demo/pull/17
+  <br><br>For details, please see the <font color='#0000FF'>demo PR: https://github.com/savina0202/Github_Actions_amd_gpu_validation_demo/pull/17 </font>
 
   
 
